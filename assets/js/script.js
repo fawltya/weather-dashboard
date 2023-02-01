@@ -8,6 +8,28 @@ var input;
 var queryURL;
 var recentSearches = [];
 
+var cityName;
+var currentTemperature;
+var currentHumidity;
+var currentWindSpeed;
+var currentIconCode;
+var cityElement;
+var dateElement;
+var currentTemperatureElement;
+var currentHumidityElement;
+var currentWindSpeedElement;
+var currentIconElement;
+var temperature;
+var humidity;
+var windSpeed;
+var iconCode;
+var day;
+var forecastElements;
+var temperatureElement;
+var humidityElement;
+var windSpeedElement;
+var iconElement;
+
 $("#search-button").on("click", function (e) {
   e.preventDefault();
   input = $("#search-input").val().trim();
@@ -21,21 +43,16 @@ $("#search-button").on("click", function (e) {
   runSearch(input);
   $("#prev-searches").empty();
   previousButtons();
-
+  //   $(".weather-displays").empty();
   //   $("#search-input").empty(); // not working
 });
 
 function runSearch(input) {
   /** Get search input query */
-  //   $("#today").empty();
-  $("#today").empty();
-  $("#forecast").empty();
+  $(".weather-displays").empty();
+
   locationQueryURL = `https://api.openweathermap.org/geo/1.0/direct?q=${input}&limit=5&appid=${apiKey}`;
 
-  // Clear prev
-  //   $("#today").empty();
-  //   $("#forecast").empty();
-  // Search for city and convert to lon/lat
   $.ajax({
     url: locationQueryURL,
     method: "GET",
@@ -49,21 +66,25 @@ function runSearch(input) {
       url: queryURL,
       method: "GET",
     }).then(function (result) {
-      var cityName = result.city.name;
+      console.log(result);
+      cityName = result.city.name;
       //   while (j < 40) {
-      var currentTemperature = result.list[j].main.temp - 272.15;
+      currentTemperature = result.list[0].main.temp - 272.15;
       //   console.log(currentTemperature.toFixed(2));
-      var currentHumidity = result.list[j].main.humidity;
-      var currentWindSpeed = result.list[j].wind.speed;
-      var currentIconCode = result.list[j].weather[0].icon;
+      currentHumidity = result.list[0].main.humidity;
+      currentWindSpeed = result.list[0].wind.speed;
+      currentIconCode = result.list[0].weather[0].icon;
 
-      cityElement = $("<h2>").text(cityName);
+      cityElement = $("<h2>");
+      cityElement.text(cityName);
       date = now.toLocaleString();
-      dateElement = `<h5>Today: ${date}</h5>`;
-      currentTemperatureElement = `<p>${currentTemperature.toFixed(2)}C</p>`;
-      currentHumidityElement = `<p>Humidity: ${currentHumidity}</p>`;
-      currentWindSpeedElement = `<p>Wind Speed: ${currentWindSpeed}</p>`;
-      currentIconElement = `<img src="https://openweathermap.org/img/w/${currentIconCode}.png" alt="weather icon" width="50">`;
+      dateElement = $(`<h5>Today: ${date}</h5>`);
+      currentTemperatureElement = $(`<p>${currentTemperature.toFixed(2)}C</p>`);
+      currentHumidityElement = $(`<p>Humidity: ${currentHumidity}</p>`);
+      currentWindSpeedElement = $(`<p>Wind Speed: ${currentWindSpeed}</p>`);
+      currentIconElement = $(
+        `<img src="https://openweathermap.org/img/w/${currentIconCode}.png" alt="weather icon" width="50">`
+      );
 
       $("#today").append(
         cityElement,
@@ -75,31 +96,27 @@ function runSearch(input) {
       );
 
       //   $("#forecast").empty(); // Clear previous data
-      for (j = 8; j < 41; j += 8) {
-        var Temperature = result.list[j].main.temp - 272.15;
-        //   console.log(currentTemperature.toFixed(2));
-        var Humidity = result.list[j].main.humidity;
-        var WindSpeed = result.list[j].wind.speed;
-        var IconCode = result.list[j].weather[0].icon;
-        var day = j / 8;
+      for (var j = 8; j < 41; j += 8) {
+        temperature = result.list[j].main.temp - 272.15;
+        humidity = result.list[j].main.humidity;
+        windSpeed = result.list[j].wind.speed;
+        iconCode = result.list[j].weather[0].icon;
+        day = j / 8;
+        console.log(j);
+        console.log(windSpeed);
 
-        TemperatureElement = `<p>${Temperature.toFixed(2)}C</p>`;
-        HumidityElement = `<p>Humidity: ${Humidity}</p>`;
-        WindSpeedElement = `<p>Wind Speed: ${WindSpeed}</p>`;
-        IconElement = `<img src="https://openweathermap.org/img/w/${IconCode}.png" alt="weather icon" width="50">`;
-        var forecastElements = `<div class="forecast-div w-25 p-3">
-            +${day} day
-            ${TemperatureElement}
-            ${HumidityElement}
-            ${WindSpeedElement}
-            ${IconElement}`;
-        // forecastElements.append(
-        //   currentTemperatureElement,
-        //   currentHumidityElement,
-        //   currentWindSpeedElement,
-        //   currentIconElement
-        // );
-        // $("#forecast").empty();
+        temperatureElement = `<p>${temperature.toFixed(2)}C</p>`;
+        console.log(temperatureElement);
+        humidityElement = `<p>Humidity: ${humidity}</p>`;
+        windSpeedElement = `<p>Wind Speed: ${windSpeed}</p>`;
+        iconElement = `<img src="https://openweathermap.org/img/w/${iconCode}.png" alt="weather icon" width="50">`;
+        forecastElements = `<div class="forecast-div w-25 p-3">
+        +${day} day
+        ${temperatureElement}
+        ${humidityElement}
+        ${windSpeedElement}
+        ${iconElement}</div>`;
+
         $("#forecast").append(forecastElements);
       }
     });
@@ -124,18 +141,8 @@ function previousButtons() {
     $("#prev-searches").append(prevListItem);
   }
 }
-if ($(".search-btn")) {
-  $("#clear-searches-btn").on("click", function (event) {
-    event.preventDefault();
-    localStorage.removeItem("recentSearches"); // Only removes highscore local storage data to keep dark mode localstorage
-    $("#prev-searches").empty();
-  });
-}
-
-// $(".search-btn").on("click", function (e) {
-//   e.preventDefault();
-//   runSearch($("data-name"));
-// });
-
-// $(document).on("click", ".search-btn", runSearch($("data-name")));
-// $(document).on("click", ".search-btn", runSearch($("data-name")));
+$("#clear-searches-btn").on("click", function (event) {
+  event.preventDefault();
+  localStorage.removeItem("recentSearches"); // Only removes highscore local storage data to keep dark mode localstorage
+  $("#prev-searches").empty();
+});
