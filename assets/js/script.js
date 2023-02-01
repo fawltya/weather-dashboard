@@ -146,3 +146,9 @@ $("#clear-searches-btn").on("click", function (event) {
   localStorage.removeItem("recentSearches"); // Only removes highscore local storage data to keep dark mode localstorage
   $("#prev-searches").empty();
 });
+
+$(".search-btn").on("click", function (event) {
+  event.preventDefault();
+  //   console.log($(this).attr("data-name"));
+  runSearch($(this).attr("data-name"));
+});
