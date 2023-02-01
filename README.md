@@ -1,4 +1,4 @@
-# Peep Show Quiz
+# Weather Dashboard with OpenWeatherMap API
 
 ## Description
 
