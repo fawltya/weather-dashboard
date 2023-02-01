@@ -134,7 +134,7 @@ function previousButtons() {
 
   for (let i = 0; i < recentSearches.length; i++) {
     var prevListItem = $(
-      `<i class="search-btn" data-name="${recentSearches[i]}">`
+      `<i class="search-btn btn btn-block btn-outline btn-accent mb-2" data-name="${recentSearches[i]}">`
     );
     prevListItem.text(`${recentSearches[i]}`);
 
